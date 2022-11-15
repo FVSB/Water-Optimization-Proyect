@@ -4,18 +4,20 @@ import Solver as sl
 
 arrayProcess: list[Process] = []
 
- def CreateCompany(count):
-      array: list[Company] = []
-       for i in range(count):
-            x = (Company(input("Nombre de la Empresa: "),
-                         CreateProcess(int(input("Cuantos Procesos Desea Crear?")
-                                           )
+
+def CreateCompany(count):
+    array: list[Company] = []
+    for i in range(count):
+        x = (Company(input("Nombre de la Empresa: "),
+                     CreateProcess(int(input("Cuantos Procesos Desea Crear?")
                                        )
-                         )
-                 )
-            array.append(x)
-            arrayProcess.append(x)
-        return array
+                                   )
+                     )
+             )
+        array.append(x)
+        arrayProcess.append(x)
+
+    return array
 
 # Creacion de Procesos
 
@@ -52,7 +54,7 @@ def CreateIntermediary():
 
 
 # Main Program
-
+"""
 a = CreateIntermediary()
 
 solver = sl.Solver(a)
@@ -62,3 +64,4 @@ for i in range(len(arrayProcess)):
 
     solver.Solver_To(process.Company, process)
     input("Presione Enter Para Continuar")
+"""
