@@ -31,7 +31,7 @@ def Solver(process_1: Process, process_2: Process, Water_from_1_to_2: float, Wat
     prob += obj >= 0.00000001, "c1"
     prob += Leader_Supply >= 0 and Leader_Supply <= process_1.Cant_Water, "c4"
     prob += process_2.C_Max_Out+Fresh_Water_Contamination <= process_1.C_Max_In, "c5"
-   # prob += process_1.C_Max_Out+Fresh_Water_Contamination <= process_2.C_Max_In, "c6"
+
     prob += y+Leader_Supply >= process_1.Cant_Water, "c7"
 
    # return
