@@ -3,6 +3,8 @@ import pulp as lp
 # Cargar Biblioteca de Clases
 import Clases as cl
 
+import pandas as pd
+
 
 class Solver:
 
