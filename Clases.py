@@ -1,4 +1,5 @@
 import os
+from pulp import LpVariable
 
 
 def clear():
@@ -39,14 +40,23 @@ class Company:
 
 
 class Intermediary:
-    def __init__(self, List_of_Company: list[Company], Price_Leader_Water: float):
+    def __init__(self, List_of_Company: list[Company], Price_Leader_Water: float, Price_Sell_Water: float):
         self.List_of_Company = List_of_Company
-        self.Dic = self.Filter({})
+        # Este dicc anota desde el proceso A que procesos B le pueden ofrecer agua
+        self.Dic_From_B_to_A = self.Filter({})
+
         self.Price_Leader_Water = Price_Leader_Water
         # Dado un proceso A Proceso de partida,B Proceso de llegada, Cantidad de agua que se va a usar
         self.DicTemp: dict[(Process, Process): float] = {}
         # Este dicc anota desde el proceso A que puede ofrecer agua al proceso B
-        self.DicFrom_TO = dict[Process, list[Process]] = {}
+        self.DicFrom_To = dict[Process, list[Process]] = {}
+        # Este dicc anota las pl.Variables de propuesta de transporte del proceso A al B
+        self.Dic_pl_Variables = dict[(Process, Process), LpVariable] = {}
+
+        self.Diccionario_COnLaSumaDelasVariablesDeVentadeAguade_A_toB: dict[Process, LpVariable] = {
+        }
+
+        self.Price_Sell_Water = Price_Sell_Water
 
     # This function is to filter the process that are going to be used
 
@@ -70,8 +80,8 @@ class Intermediary:
     # This function is to choose the process that are going to be used
     def Choice_The_Possibles(self):
 
-        for i in self.Dic.keys():
-            for j in self.Dic[i]:
+        for i in self.Dic_From_B_to_A.keys():
+            for j in self.Dic_From_B_to_A[i]:
                 print(i.Name, "  From ", i.Company,
                       " The Contamination it's ", i.C_Max_In)
                 print("can be used with")
@@ -80,21 +90,32 @@ class Intermediary:
                 a = input("Do you want to use this process? (Y/N)")
                 clear()
                 if (a == "N"):
-                    self.Dic[i].remove(j)
+                    self.Dic_From_B_to_A[i].remove(j)
                     self.DicFrom_To[j].remove(i)
                 else:
                     count = input("How much water do you want to use?")
                     # From_To
                     self.DicTemp[(i, j)] = count
+
+                    string = i.Name+" To "+j.Name
+                    lp_Variable = LpVariable(
+                        string, lowBound=0, upBound=count, cat="Continuous")
+                    # From_To_ lpVariable
+                    self.Dic_pl_Variables[(i, j)] = lp_Variable
+
+                    self.Diccionario_COnLaSumaDelasVariablesDeVentadeAguade_A_toB[i] += lp_Variable
         return self.DicTemp
 
     def Get_The_Possibles_Process(self, Process: Process):
-        return self.Dic[Process]
+        return self.Dic_From_B_to_A[Process]
         # This function is to choose the process that are going to be used
 
     def Get_The_Possibles_From(self, Process: Process):
         return self.DicFrom_To[Process]
       # Esta funcion indica cuales procesos pueden ir del proceso A en analisis a otro B
 
-    def Get_The_Posibles_Count(self, ProcessFrom: Process, ProcessTo: Process):
-        return float(self.DicTemp[(ProcessFrom, ProcessTo)])
+    def Get_The_Posibles_Lp_Variable(self, ProcessFrom: Process, ProcessTo: Process):
+        return LpVariable(self.Dic_pl_Variables[(ProcessFrom, ProcessTo)])
+
+    def Get_The_Sum_Of_The_From_A_To_B(self, Process: Process):
+        return self.Diccionario_COnLaSumaDelasVariablesDeVentadeAguade_A_toB[Process]
