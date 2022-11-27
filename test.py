@@ -1,36 +1,45 @@
-import pulp as lp
+import pulp as pl
+import Solver as sl
 
-# cargar la librería PuLP
+def CreateProcess(count):
+    array: list[Process] = []
+    for i in range(count):
+        name = input("Nombre del Proceso: ")
 
-# Problema de programación lineal
-prob = lp.LpProblem("test_de_optimizacion", lp.LpMinimize)
+        C_Max_in = float(input("Contaminacion Maxima de Entrada: "))
 
-# Variables
-# 0 <= x <= 4
-x = lp.LpVariable("x", 0, 4)
-# -1 <= y <= 1
-y = lp.LpVariable("y", -1, 1)
+        C_Max_out = float(input("Contaminacion Maxima de Salida: "))
 
-# Objetivo
-prob += x + 4*y, "obj"  # Restricciones
-prob += x+y <= 5, "c1"
-prob += x-y >= -2, "c2"
+        Cant_Water = float(input("Cantidad de Agua para el proceso: "))
 
+        array.append(Process(name, C_Max_in, C_Max_out,
+                             Cant_Water))
 
-prob.solve()
-print(" Impresión de los valores de las variables óptimas")
-# Impresión de los valores de las variables óptimas
-for v in prob.variables():
-    print(v.name, "=", v.varValue)
-print("--------------------------------------------------------------------------------")
-print("Valor óptimo de la función objetivo:", lp.value(prob.objective))
-# Valor objetivo
-print("objective=", lp.value(prob.objective))
+    return array
 
 
-def fff():
-    '''x:is a float'''
-    return 4
+def Start():
+    listProcess = CreateProcess(2)
+    process_1 = listProcess[0]
+    process_2 = listProcess[1]
+
+    Water_from_1_to_2 = float(input("Water from 1 to 2: "))
+    Water_from_2_to1 = float(input("Water from 2 to 1: "))
+    Leader_Water_price = float(input("Leader Water Price: "))
+    Leader_Water_Supply = float(input("Leader Water Supply: "))
+    Price_transport_water = float(input("Price transport water: "))
+    prob = sl.Solver.Solve(process_1, process_2, Water_from_1_to_2,
+                           Water_from_2_to1, Price_transport_water, Leader_Water_price, Leader_Water_Supply)
+    prob.to_json("prob.json")
+    print(" Impresión de los valores de las variables óptimas")
+
+    # Impresión de los valores de las variables óptimas
+    for v in prob.variables():
+        print(v.name, "=", v.varValue)
+        print("--------------------------------------------------------------------------------")
+        print("Valor óptimo de la función objetivo:", pl.value(prob.objective))
+        # Valor objetivo
+        print("objective=", pl.value(prob.objective))
 
 
-fff()
+Start()
