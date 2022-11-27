@@ -10,17 +10,11 @@ def clear():
 
 
 class Process:  # Please with the name of the process write the company that is going to do it
-    def __init__(self, Name: str, C_Max_In: float, C_Max_Out: float, Cant_Water: float, Cant_Discharged_Water: float, Price_Discharged_Water: float, Price_Sell_Water: float, Cant_Water_Leader: float = -1):
+    def __init__(self, Name: str, C_Max_In: float, C_Max_Out: float, Cant_Water: float):
         self.Name = Name
         self.C_Max_In = C_Max_In
         self.C_Max_Out = C_Max_Out
-        self.Price_Sell_Water = Price_Sell_Water
-        self.Cant_Discharge_Water = Cant_Discharged_Water
-        self.Price_Discharged_Water = Price_Discharged_Water
         self.Cant_Water = Cant_Water
-        self.Cant_Water_Leader = Cant_Water_Leader
-        if (self.Cant_Water_Leader < 0):
-            self.Cant_Water_Leader = self.Cant_Water
 
     def __str__(self):
         return "Name: "+self.Name+" C_Max_In: "+self.C_Max_In+" C_Max_Out: "+self
