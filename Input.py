@@ -3,6 +3,8 @@ import pandas as pd
 import os.path
 from Auxiliar_Class import Process, Company
 
+# Buscar el nombre de todas las hojas del excel
+
 
 def nameAllSheets(filename):
     if not os.path.isfile(filename):
@@ -10,6 +12,8 @@ def nameAllSheets(filename):
     xls = pd.ExcelFile(filename)
     sheets = xls.sheet_names
     return sheets
+
+# Crear la clase Company
 
 
 def Create_Company(Dicc: pd.DataFrame, Name: str) -> Company:
@@ -25,23 +29,25 @@ def Create_Company(Dicc: pd.DataFrame, Name: str) -> Company:
     Process_to_send = Dicc['Process to send'][0]
     Max_water_Supply_To_Other = Dicc['Max water Supply'][0]
     Price_supply_water = Dicc['Price supply water'][0]
-    Price_discharge_water=Dicc["Discharge water price"][0]
+    Price_discharge_water = Dicc["Discharge water price"][0]
+    #Crear un proceso
     process1 = Process(Name=process_Name, Company=Name, C_Max_In=C_Max_In, C_Max_Out=C_Max_out, Cant_Water=Process_Water_Consumption,
                        State_Max_Water_Supply=State_Water_Supply, Sale_Price_State_Supply=Sale_State_Water_Price,
-                       Time_of_Test=Time_of_test,Price_discharge_water=Price_discharge_water,
+                       Time_of_Test=Time_of_test, Price_discharge_water=Price_discharge_water,
                        Process_To_send={(Company_to_send, Process_to_send): [Max_water_Supply_To_Other, Price_supply_water]})
-
+    #Crear la compañia
     return Company(Process_list=[process1], Name=Name)
 
 
 def Read_Excel(Path: str = "DataBase.xlsx"):
-
+    # Leer el archivo de excel y guardar en un diccionario
     a = pd.read_excel(Path, sheet_name=None, header=None, skiprows=1, names=["Process", "C_Max_In", "C_Max_Out",
                                                                              "Process Water Consumption", "State´s Water Supply",
                                                                              "State´s water price", "Discharge water price", "Time of test", "Company to send",
                                                                              "Process to send", "Max water Supply", "Price supply water"])
 
     Company_list = []
+
     for i in nameAllSheets("DataBase.xlsx"):
         x = a.pop(i)
         Company_list.append(Create_Company(x.to_dict(), i))
