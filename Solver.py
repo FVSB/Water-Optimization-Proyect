@@ -7,8 +7,15 @@ def Solve(process_1: Process, process_2: Process):
 
     Water_From_1_to_2 = process_1.Process_To_send[(
         process_2.Company, process_2.Name)][0]
+    # Si no es aceptable los niveles de contaminante de salida con los de entrada
+    if not Control(process_1.C_Max_Out, process_2.C_Max_In):
+        Water_From_1_to_2 = 0
+
     Water_From_2_to_1 = process_2.Process_To_send[(
         process_1.Company, process_1.Name)][0]
+    # Si no es aceptable los niveles de contaminante de salida con los de entrada
+    if (not Control(process_2.C_Max_Out, process_1.C_Max_In)):
+        Water_From_2_to_1 = 0
 
     Water_Leader_supply = process_1.State_Max_Water_Supply
     Leader_Water_price = process_1.Sale_Price_State_Supply
@@ -51,3 +58,9 @@ def Solve(process_1: Process, process_2: Process):
     prob.solve()
 # return
     return prob
+
+
+def Control(C_Max_out_1: int, C_Max_in_2) -> bool:
+    if (C_Max_out_1 <= C_Max_in_2):
+        return True
+    return False
