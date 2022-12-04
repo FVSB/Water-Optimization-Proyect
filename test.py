@@ -1,9 +1,9 @@
 import pulp as pl
 import os
-from Solver import Solve
-from Auxiliar_Class import Process, Company
-from Input import Read_Excel, Read_Folder
-from Output import Output
+from Core.Solver import Solve
+from Core.Auxiliar_Class import Process, Company
+from Core.Input import Read_Excel, Read_Folder
+from Core.Output import Output
 
 
 def Start(Time_of: int):

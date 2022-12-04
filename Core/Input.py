@@ -1,7 +1,7 @@
 import pandas as pd
 import os.path
 from os import listdir
-from Auxiliar_Class import Process, Company
+from Core.Auxiliar_Class import Process, Company
 
 # Buscar el nombre de todas las hojas del excel
 

@@ -1,5 +1,5 @@
 import pulp as pl
-from Auxiliar_Class import Process
+from Core.Auxiliar_Class import Process
 
 
 def Solve(process_1: Process, process_2: Process):
