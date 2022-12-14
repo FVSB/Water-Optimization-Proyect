@@ -40,10 +40,11 @@ def Newton_Raphson(matrix: Matrix, Array_Var, Array_initial, epsilon):
     X_1 = np.zeros(len(X_0))
 
     norm = np.linalg.norm
-
+    i=0
     while (norm(X_0-X_1) > epsilon):
+        if(i>0):X_0 = X_1
         X_1 = Next_Step(jacobian=jacobian,
                         Array_Var=Array_Var, X_0=X_0, vect=Sel)
-        X_0 = X_1
+        i+=1        
 
-    return X_1
+    return X_1,i
