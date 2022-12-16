@@ -30,11 +30,12 @@ def Create_Company(Dicc: pd.DataFrame, Name: str) -> Company:
     Max_water_Supply_To_Other = Dicc['Max water Supply'][0]
     Price_supply_water = Dicc['Price supply water'][0]
     Price_discharge_water = Dicc["Discharge water price"][0]
+    Con_Contamination=Dicc["Con_Contamination"][0]
     # Crear un proceso
     process1 = Process(Name=process_Name, Company=Name, C_Max_In=C_Max_In, C_Max_Out=C_Max_out, Cant_Water=Process_Water_Consumption,
                        State_Max_Water_Supply=State_Water_Supply, Sale_Price_State_Supply=Sale_State_Water_Price,
                        Time_of_Test=Time_of_test, Price_discharge_water=Price_discharge_water,
-                       Process_To_send={(Company_to_send, Process_to_send): [Max_water_Supply_To_Other, Price_supply_water]})
+                       Process_To_send={(Company_to_send, Process_to_send): [Max_water_Supply_To_Other, Price_supply_water]},Con_Contamination=Con_Contamination)
     # Crear la compañia
     return Company(Process_list=[process1], Name=Name)
 
@@ -48,7 +49,7 @@ def Read_Excel(Path: str):
     a = pd.read_excel(Path, sheet_name=None, header=None, skiprows=1, names=["Process", "C_Max_In", "C_Max_Out",
                                                                              "Process Water Consumption", "State´s Water Supply",
                                                                              "State´s water price", "Discharge water price", "Time of test", "Company to send",
-                                                                             "Process to send", "Max water Supply", "Price supply water"])
+                                                                             "Process to send", "Max water Supply", "Price supply water","Con_Contamination"])
 
     Company_list = []
 

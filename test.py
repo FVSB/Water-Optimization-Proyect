@@ -3,7 +3,23 @@ import os
 from Core.Solver import Solve
 from Core.Auxiliar_Class import Process, Company
 from Core.Input import Read_Excel, Read_Folder
-from Core.Output import Output
+from Core.Output import Output, Output_Numerical
+from Numerical.Test import Solve_Numerical
+
+
+def Numerical_Solution(Process_1: Process, Process_2: Process, Time_of: int, file):
+
+    Water_From_2_to_1 = Process_2.Process_To_send[(
+        Process_1.Company, Process_1.Name)][0]
+    Water_From_1_to_2 = Process_1.Process_To_send[(
+        Process_2.Company, Process_2.Name)][0]
+    start = [Water_From_1_to_2, Water_From_2_to_1, Process_1.State_Max_Water_Supply,
+             Process_2.State_Max_Water_Supply,
+             Process_1.C_Max_Out, 0.1, 0.1, 0.1, 0.1, 0.1,
+             0.1, 0.1]
+    s, i = Solve_Numerical(a=Process_1.Sale_Price_State_Supply, b=Process_1.Price_discharge_water,
+                           Con_Concen_1=Process_1.Con_Contamination, Con_Concen_2=Process_2.Con_Contamination, d=Process_1.Price_discharge_water, h=Time_of, Array_initial=start)
+    Output_Numerical(str(Process_1.Name), s, file)
 
 
 def Start(Time_of: int):
@@ -13,6 +29,9 @@ def Start(Time_of: int):
         path = os.path.join("Data_Base", t)
         Company_list = Read_Excel(path)
         Output_name = "Output "+t
+        # Solucion numerica
+        Numerical_Solution(Company_list[0].Process_list[0],
+                           Company_list[1].Process_list[0], Time_of, Output_name)
         # Por la cant de veces a realizar el proceso
         for i in range(Time_of):
             # Respuesta del solver

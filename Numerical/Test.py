@@ -1,11 +1,12 @@
 from sympy import *
 import numpy as np
-from Newton_Raphson import *
-from Newton_Raphson_LU import *
+#from Newton_Raphson import *
+from Numerical.Newton_Raphson_LU import *
+
 # α β   δ  h
 
 
-def Solve(a, b, d, h, Array_initial: list, epsilon=0.0001):
+def Solve_Numerical(a, b, d, h, Con_Concen_1, Con_Concen_2, Array_initial: list, epsilon=0.01):
     # Variables
     x = symbols('x')
     y = symbols('y')
@@ -19,8 +20,8 @@ def Solve(a, b, d, h, Array_initial: list, epsilon=0.0001):
     m_6 = symbols('m_6')
     l_1 = symbols('λ_1')
     l_2 = symbols('λ_2')
-    C_max_1 = symbols('C_max_1')
-    C_max_2 = symbols('C_max_2')
+    C_max_1 = Con_Concen_1
+    C_max_2 = Con_Concen_2
     # Funciones
     d_1 = h*(-b+1/2*d)-m_1+m_3
     d_2 = h*(a+b)-m_2-m_3+(l_1*C_max_1)
