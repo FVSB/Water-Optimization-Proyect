@@ -44,7 +44,7 @@ def Read_Folder(path: str = "Data_Base") -> list:
     return listdir(path)
 
 
-def Read_Excel(Path: str):
+def Read_Excel(Path: str)->list[Company]:
     # Leer el archivo de excel y guardar en un diccionario
     a = pd.read_excel(Path, sheet_name=None, header=None, skiprows=1, names=["Process", "C_Max_In", "C_Max_Out",
                                                                              "Process Water Consumption", "State´s Water Supply",

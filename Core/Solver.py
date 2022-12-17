@@ -25,11 +25,10 @@ def Solve(process_1: Process, process_2: Process):
     # Invocar una nuevo problema del solver de pulp (minimizar)
     prob = pl.LpProblem("Water", pl.LpMinimize)
 
-    # X: cant de agua que se envía de 1 a 2
-    x = pl.LpVariable(str("Water From "+str(process_1.Company)+str(process_1.Name)+" To "+str(process_2.Company)+str(process_2.Name)), lowBound=0,
-                      upBound=Water_From_1_to_2, cat="Continuous")
+    # X: cant de agua que se vende
+    x = Water_From_1_to_2
 
-    # Y: cant de agua que se envía de 2 a 1
+    # Y: cant de agua que compro
     y = pl.LpVariable(str("Water From "+str(process_2.Company)+str(process_2.Name)+" To "+str(process_1.Company)+str(process_1.Name)), lowBound=0,
                       upBound=Water_From_2_to_1, cat="Continuous")
 
@@ -52,7 +51,7 @@ def Solve(process_1: Process, process_2: Process):
     # Agregar condición al problema
     prob += Leader_Supply >= 0 and Leader_Supply <= float(
         process_1.Cant_Water), "c1"
-    prob += float(process_2.C_Max_Out) <= float(process_1.C_Max_In), "c2"
+
     prob += y+Leader_Supply >= float(process_1.Cant_Water), "c3"
 
     prob.solve()

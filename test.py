@@ -22,6 +22,69 @@ def Numerical_Solution(Process_1: Process, Process_2: Process, Time_of: int, fil
     Output_Numerical(str(Process_1.Name), s, file)
 
 
+def Change_Val(Process_1: Process, Process_2: Process):
+    """_summary_:
+        Toma los procesos  y compara para su nueva maxima concentración el máximo
+        entre su concentración maxima de salida actual y la concentración maxima de salida del otro
+        más lo que añade cada proceso
+    """
+    # Contaminacion actual del proceso / Contaminacion actual del contrario mas lo que añade el proceso
+    Process_1.C_Max_Out = max(
+        Process_1.C_Max_Out, Process_2.C_Max_Out+Process_1.Con_Contamination)
+    return Process_1
+
+
+def Solution(Process_to_analysis: Process, Process_to_buy_Water: Process):
+    temp = {}
+    Process_1 = Process_to_analysis.Name
+    Process_2 = Process_to_buy_Water.Name
+
+    for j in range(2):
+        Process_1_ofert = Process_to_buy_Water.Process_To_send[(
+            Process_to_analysis.Company, Process_to_analysis.Name)][0]
+        sol = Solve(process_1=Process_to_analysis, process_2=Process_to_buy_Water
+                    )
+        # Coste optimo
+        Total_Cost = pl.value(sol.objective)
+        # Añadir valores de las varibles
+        xs = sol.variables()
+        # Cant de agua que debe proporcionar el lider
+        Leader_water_supply = float(xs[0].varValue)
+        # Agua que va del proceso 1 al 2
+        Water_From_Hear_To_Other = Process_1_ofert
+        # Agua que va del proceso 2 al 1
+        Water_From_Other_To_Hear = float(xs[1].varValue)
+        # Nombre del proceso  [Costo , Agua que debe proporcionar el lider, Agua que va del proceso al otro proceso, Agua que viene del otro proceso]
+        temp[Process_to_analysis.Name] = [Total_Cost, Leader_water_supply,
+                                          Water_From_Hear_To_Other, Water_From_Other_To_Hear]
+        # Cambiar los valores de los procesos dado que se conoce el valor
+        # que va del primer proceso al segundo
+        Process_to_buy_Water.Process_To_send[(
+            Process_to_analysis.Company, Process_to_analysis.Name)][0] = Water_From_Hear_To_Other
+
+        # Swap los procesos
+        be = Process_to_analysis
+        af = Process_to_buy_Water
+        Process_to_analysis = af
+        Process_to_buy_Water = be
+
+        # Arreglar el valor de venta real del Primer
+        # proceso a analizar pq este asume que el 2do
+        # le compra todo la oferta de agua
+        if (j > 0):
+            t = temp[Process_1][3]
+            val = temp[Process_2][3]
+            temp[Process_1][2] = val
+            if (val > 0):
+                Process_to_analysis = Change_Val(
+                    Process_to_analysis, Process_to_buy_Water)
+            if (t > 0):
+                Process_to_buy_Water = Change_Val(
+                    Process_to_buy_Water, Process_to_analysis)
+
+    return temp, Process_to_analysis, Process_to_buy_Water
+
+
 def Start(Time_of: int):
     # Leer el archivo de excel
     All_tupples = Read_Folder()
@@ -29,28 +92,25 @@ def Start(Time_of: int):
         path = os.path.join("Data_Base", t)
         Company_list = Read_Excel(path)
         Output_name = "Output "+t
+        Process_to_analysis = Company_list[0].Process_list[0]
+        Process_to_buy_Water = Company_list[1].Process_list[0]
         # Solucion numerica
-        Numerical_Solution(Company_list[0].Process_list[0],
-                           Company_list[1].Process_list[0], Time_of, Output_name)
+        # Numerical_Solution(Process_1=Process_to_analysis,
+        # Process_2=Process_to_buy_Water, Time_of=Time_of, file=Output_name)
         # Por la cant de veces a realizar el proceso
+        dicc = {int: dict}
+        x = 0
         for i in range(Time_of):
             # Respuesta del solver
-            sol = Solve(Company_list[0].Process_list[0],
-                        Company_list[1].Process_list[0])
-            # Coste optimo
-            Total_Cost = pl.value(sol.objective)
-            # Añadir valores de las varibles
-            xs = sol.variables()
-            # Cant de agua que debe proporcionar el lider
-            Leader_water_supply = float(xs[0].varValue)
-            # Agua que va del proceso 1 al 2
-            Water_From_1_to_2 = float(xs[1].varValue)
-            # Agua que va del proceso 2 al 1
-            Water_From_2_to_1 = float(xs[2].varValue)
+            temp, Process_to_analysis, Process_to_buy_Water = Solution(
+                Process_to_analysis, Process_to_buy_Water)
+
+            # Agregar a diccionario
+            dicc[i] = temp
+            x += 1
             # Serializar en el excel
-            Output(str(Company_list[0].Process_list[0].Name), Total_Cost=Total_Cost,
-                   Leader_Supply=Leader_water_supply, Water_from_1_to_2=Water_From_1_to_2,
-                   Water_from_2_to_1=Water_From_2_to_1, filename=Output_name)
+        Output(filename=Output_name, dicc=dicc, Process_1_Name=Process_to_analysis.Name,
+               Process_2_Name=Process_to_buy_Water.Name, x=x)
 
 
 def main():
