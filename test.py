@@ -22,18 +22,6 @@ def Numerical_Solution(Process_1: Process, Process_2: Process, Time_of: int, fil
     Output_Numerical(str(Process_1.Name), s, file)
 
 
-def Change_Val(Process_1: Process, Process_2: Process):
-    """_summary_:
-        Toma los procesos  y compara para su nueva maxima concentración el máximo
-        entre su concentración maxima de salida actual y la concentración maxima de salida del otro
-        más lo que añade cada proceso
-    """
-    # Contaminacion actual del proceso / Contaminacion actual del contrario mas lo que añade el proceso
-    Process_1.C_Max_Out = max(
-        Process_1.C_Max_Out, Process_2.C_Max_Out+Process_1.Con_Contamination)
-    return Process_1
-
-
 def Solution(Process_to_analysis: Process, Process_to_buy_Water: Process):
     temp = {}
     Process_1 = Process_to_analysis.Name
@@ -75,12 +63,6 @@ def Solution(Process_to_analysis: Process, Process_to_buy_Water: Process):
             t = temp[Process_1][3]
             val = temp[Process_2][3]
             temp[Process_1][2] = val
-            if (val > 0):
-                Process_to_analysis = Change_Val(
-                    Process_to_analysis, Process_to_buy_Water)
-            if (t > 0):
-                Process_to_buy_Water = Change_Val(
-                    Process_to_buy_Water, Process_to_analysis)
 
     return temp, Process_to_analysis, Process_to_buy_Water
 
@@ -95,8 +77,8 @@ def Start(Time_of: int):
         Process_to_analysis = Company_list[0].Process_list[0]
         Process_to_buy_Water = Company_list[1].Process_list[0]
         # Solucion numerica
-        # Numerical_Solution(Process_1=Process_to_analysis,
-        # Process_2=Process_to_buy_Water, Time_of=Time_of, file=Output_name)
+        Numerical_Solution(Process_1=Process_to_analysis,
+                           Process_2=Process_to_buy_Water, Time_of=Time_of, file=Output_name)
         # Por la cant de veces a realizar el proceso
         dicc = {int: dict}
         x = 0
