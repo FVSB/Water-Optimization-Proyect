@@ -77,6 +77,11 @@ def Solution(Process_to_analysis: Process, Process_to_buy_Water: Process):
 
 
 def Start(Time_of: int):
+    """_summary_
+
+    Args:
+        Time_of (int): time of the simulation
+    """
     # Leer el archivo de excel
     All_tupples = Read_Folder()
     for t in All_tupples:

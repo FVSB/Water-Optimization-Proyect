@@ -14,7 +14,7 @@ def Next_Step(result: Matrix, Array_Var, X_0):
 
     # Hallar el paso con la solucion del Sel
     h = Points_values((result), Array_Var, X_0)
-
+    
     # vector de paso
     h = h.flatten()
 
