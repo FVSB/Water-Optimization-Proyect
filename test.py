@@ -2,23 +2,32 @@ import pulp as pl
 import os
 from Core.Solver import Solve
 from Core.Auxiliar_Class import Process, Company
-from Core.Input import Read_Excel, Read_Folder
+from Input import Read_Excel, Read_Folder
 from Core.Output import Output, Output_Numerical
 from Numerical.Test import Solve_Numerical
 
 
+def initial_values(Process_1: Process, Process_2: Process):
+    Water_From_2_to_1 = Process_1.How_Much_buy(Process_2)
+    Water_From_1_to_2 = Process_2.How_Much_buy(Process_1)
+    stateSupply_1 = Process_1.stateSupply()-Water_From_2_to_1
+    stateSupply_2 = Process_2.stateSupply()-Water_From_1_to_2
+
+    return Water_From_2_to_1, Water_From_1_to_2, float(stateSupply_1), float(stateSupply_2)
+
+
 def Numerical_Solution(Process_1: Process, Process_2: Process, Time_of: int, file):
 
-    Water_From_2_to_1 = Process_2.Process_To_send[(
-        Process_1.Company, Process_1.Name)][0]
-    Water_From_1_to_2 = Process_1.Process_To_send[(
-        Process_2.Company, Process_2.Name)][0]
-    start = [Water_From_1_to_2, Water_From_2_to_1, Process_1.State_Max_Water_Supply,
-             Process_2.State_Max_Water_Supply,
-             Process_1.C_Max_Out, 0.1, 0.1, 0.1, 0.1, 0.1,
-             0.1, 0.1]
-    s, i = Solve_Numerical(a=Process_1.Sale_Price_State_Supply, b=Process_1.Price_discharge_water,
-                           Con_Concen_1=Process_1.Con_Contamination, Con_Concen_2=Process_2.Con_Contamination, d=Process_1.Price_discharge_water, h=Time_of, Array_initial=start)
+    Water_From_2_to_1, Water_From_1_to_2, stateSupply_1, stateSupply_2 = initial_values(
+        Process_1=Process_1, Process_2=Process_2)
+
+    start = [Water_From_1_to_2, Water_From_2_to_1, stateSupply_1,
+             stateSupply_2,
+             0.5, 0.5, 0.5, 0.5, 0.5, 0.5,
+             0.5, 0.5]
+
+    s, i = Solve_Numerical(Consumo_1=Process_1.Cant_Water, Consumo_2=Process_2.Cant_Water, a=Process_1.Sale_Price_State_Supply, b=Process_1.Price_discharge_water,
+                           Con_Concen_1=Process_1.C_Max_Out, Con_Concen_2=Process_2.C_Max_Out, d=Process_1.Price_discharge_water, h=Time_of, Array_initial=start)
     Output_Numerical(str(Process_1.Name), s, file)
 
 
@@ -28,8 +37,8 @@ def Solution(Process_to_analysis: Process, Process_to_buy_Water: Process):
     Process_2 = Process_to_buy_Water.Name
 
     for j in range(2):
-        Process_1_ofert = Process_to_buy_Water.Process_To_send[(
-            Process_to_analysis.Company, Process_to_analysis.Name)][0]
+        Process_1_ofert = Process_to_analysis.water_Supply_Other(
+            Process_to_buy_Water)
         sol = Solve(process_1=Process_to_analysis, process_2=Process_to_buy_Water
                     )
         # Coste optimo
@@ -38,17 +47,17 @@ def Solution(Process_to_analysis: Process, Process_to_buy_Water: Process):
         xs = sol.variables()
         # Cant de agua que debe proporcionar el lider
         Leader_water_supply = float(xs[0].varValue)
-        # Agua que va del proceso 1 al 2
+        # Agua que vendo
         Water_From_Hear_To_Other = Process_1_ofert
-        # Agua que va del proceso 2 al 1
+        # Agua compro
         Water_From_Other_To_Hear = float(xs[1].varValue)
         # Nombre del proceso  [Costo , Agua que debe proporcionar el lider, Agua que va del proceso al otro proceso, Agua que viene del otro proceso]
         temp[Process_to_analysis.Name] = [Total_Cost, Leader_water_supply,
                                           Water_From_Hear_To_Other, Water_From_Other_To_Hear]
         # Cambiar los valores de los procesos dado que se conoce el valor
         # que va del primer proceso al segundo
-        Process_to_buy_Water.Process_To_send[(
-            Process_to_analysis.Company, Process_to_analysis.Name)][0] = Water_From_Hear_To_Other
+       # Process_to_buy_Water.Process_To_send[(
+        #  Process_to_analysis.Company, Process_to_analysis.Name)][0] = Water_From_Hear_To_Other
 
         # Swap los procesos
         be = Process_to_analysis

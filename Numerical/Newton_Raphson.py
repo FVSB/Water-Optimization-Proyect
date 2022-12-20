@@ -35,13 +35,13 @@ def Newton_Raphson(matrix: Matrix, Array_Var, Array_initial, epsilon):
     #  d_7, d_8, d_9, d_10, d_11, d_12])
 
     jacobian = matrix.jacobian(Array_Var)
-
+    print(jacobian)
     X_0 = np.array(Array_initial)
     X_1 = np.zeros(len(X_0))
 
     norm = np.linalg.norm
     i = 0
-    while (norm(X_0-X_1) > epsilon):
+    while (norm(X_0-X_1) > epsilon or i == 0):
         if (i > 0):
             X_0 = X_1
         X_1 = Next_Step(jacobian=jacobian,

@@ -61,7 +61,8 @@ def Output_Numerical(Process_name, Array, filename):
          "λ_1": [Array[4]], "λ_2": [Array[5]],
          "μ_1": [Array[6]], "μ_2": [Array[7]],
          "μ_3": [Array[8]], "μ_4": [Array[9]],
-         "μ_5": [Array[10]], "μ_6": [Array[11]]}
-    )
+         "μ_5": [Array[10]], "μ_6": [Array[11]]})  # ,
+    # "μ_7": [Array[12]], "μ_8": [Array[13]]})
+
     path = os.path.join("Output", str("Numerical"+filename))
     df.to_excel(path, sheet_name=Process_name, index=False)
