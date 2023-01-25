@@ -1,0 +1,393 @@
+\documentclass{article}
+\topmargin -1in
+\textheight 9in
+\oddsidemargin 0in
+\evensidemargin 0in
+\textwidth 6.5in
+
+\usepackage{lmodern}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,activeacute]{babel}
+\usepackage{mathtools}
+
+\begin{document}
+
+\title{Pr\'acticas de Producci\'on}
+\date{Tutores: Gemayqzel Bouza Allende,Yeneit Delgado Kios.}
+\author{Autores: Francisco Vicente Su\'arez Bell\'on, Eric Luis  L\'opez Tornas.}
+\maketitle
+
+\begin{center}
+
+
+\vspace{1cm}
+{\Large Resumen:}
+\end{center}
+
+\vspace{0.5cm}
+Durante las \'ultimas d\'ecadas, la industrializaci\
+'on ha contribuido al deterioro medioambiental.
+ Como resultado de esto, existe una necesidad real
+ de que las industrias sean cada vez m\'as eficientes
+  en consumo de recursos naturales para mantener e
+  levados niveles de producci\'on. El modelo
+   matem\'atico que describe esa situaci\'on se
+    ha descrito en la literatura. Este  tiene una
+     estructura jer\'arquica en que un l\'ider: el
+      estado, fija los precios para promover el
+       reciclaje, dado que los seguidores, las
+        empresas, minimizan los costos asociados
+         a la obtenci\'on del recurso que necesitan
+          ya sea mediante el reciclaje o compr\'andolo 
+          al l\'ider. Este proyecto posee como objetivo
+            el estudio de dos algoritmos para resolver
+             el modelo en cuesti\'on , uno de tipo
+              Gauss-Seidel y el m\'etodo de Newton.\\
+\\
+\\
+{\large Palabras Claves:}   Eco-parque industrial,  Optimizaci\'on bi-nivel,  MPCC, Teor\'ia de Juegos.
+
+
+
+\begin{center}
+\vspace{0.5cm}
+{\Large Abstract:}
+\end{center}
+Industrialization has led to significant environmental degradation in recent decades,
+highlighting the need for industries to become increasingly efficient in their consumption
+ of natural resources. To address this issue, policies that promote recycling in industrial
+  parks are being established. 
+In this study, we propose a bi-level mathematical model that describes an industrial eco-park
+where the state acts as the leader and sets prices to incentivize recycling, while companies,
+ acting as followers, minimize costs associated with obtaining resources through recycling or
+  purchasing from the leader. 
+The resulting bi-level model is relaxed using necessary optimality conditions, resulting in a 
+complementarity problem. 
+The objective of this project is to study specific algorithms for solving the model, including
+Gauss-Seidel and Newton's method, and to analyze their performance in finding solutions.\\
+\vspace{0.5cm}
+
+\begin{center}
+\vspace{1cm}
+{\Large Introducci\'on:}
+\end{center}
+
+\vspace{0.5cm}
+La modelaci\'on de los eco-parques industriales de
+ intercambio de agua es un problema  complejo 
+ con un n\'umero grande de  variables como son la cantidad de agua que compra cada empresa 
+ al estado y la que es adquirida de otros procesos y empresas, adem\'as las  restricciones
+  a considerar como que tanto el agua a comprar por el l\'ider como la adquirida por el reciclaje debe satisfacer las 
+  necesidades de cada proceso de cada empresa, siendo estas dos variables siempre positivas, adem\'as de controlar los par\'ametros 
+ de salida de contaminaci\'an m\'axima asi como su an\'alogo para la entrada, cumpli\'endose que en para los casos en que sea aceptada la oferta hecha por parte de un provedor (otra empresa) o parte de esta, la cual es agua reciclada;
+ la contaminaci\'on m\'axima de salida suministrada debe ser menor o igual
+ que la cantidad m\'axima admitida por el comprador. 
+
+   . La soluci\'on planteada en este documento est\'a dada por encontrar
+    un equilibrio de Nash en el costo del consumo de la muestra de procesos y empresas analizar.\\
+    (En este trabajo el an\'alisis se centra en dos empresas con un proceso por cada una.)
+\begin{center}
+\newpage
+\vspace{1cm}
+{\Large Nomenclatura:}
+\end{center}
+
+\vspace{0.5cm}
+{\large $ x $}: cantidad de agua que env\'ia la empresa 1 a la empresa 2.
+
+\vspace{0.5cm}
+{\large $ y $}: cantidad de agua que env\'ia la empresa 2 a la empresa 1.
+
+\vspace{0.5cm}
+{\large $ z_i $}: cantidad de agua que env\'ia el estado a la empresa. 
+
+\vspace{0.5cm}
+$ C\max{I_{i}} $: cantidad m\'axima de contaminante a la entrada del proceso de la empresa i
+
+\vspace{0.5cm}
+$ C\max{O_{i}} $: cantidad m\'axima de contaminante a la salida del proceso de la empresa i
+
+\vspace{0.5cm}
+{\large $ h $}: cantidad de horas de trabajo anual del eco-parque.
+
+\vspace{0.5cm}
+{\large $ \alpha $}: precio del agua fresca.
+
+\vspace{0.5cm}
+{\large $ \beta $}: precio de desechar el agua.
+
+\vspace{0.5cm}
+{\large $ \delta $}: precio de bombear agua contaminada.
+
+\vspace{0.5cm}
+{\large $ M_i $}: carga de contaminante del proceso de la empresa i.
+
+\vspace{0.5cm}
+{\large $ W_{i}$}: cantidad de agua necesaria para la empresa i.
+
+\vspace{0.5cm}
+{\large $ W_{zi}$}: cantidad de agua ofertada  por el estado a la empresa i.
+
+\vspace{0.5cm}
+{\large $ W_{ji}$}: cantidad de agua ofertada  por la empresa j a la empresa i.
+
+\begin{center}
+\vspace{1cm}
+{\Large Modelo Matem\'atico:}
+\end{center}
+
+\vspace{0.5cm}
+\textbf{Funci\'on de costo anual para la empresa i:}
+
+\begin{center}
+{\Large $ f(t_1,t_2, z_i) = h*(\alpha z_i + \beta (z_i + t_2 - t_1) + \frac{\delta}{2} (t_1 + t_2)) $}
+\end{center}
+
+\vspace{0.5cm}
+\textbf{Funci\'on para optimizar el costo de la empresa 1:}
+
+\begin{displaymath}
+ G_{1} (x, y, z_1) = \left\{ \begin{array}{ll}
+m\'in f(x,y,z_1) \\
+S.A\left\{ \begin{array}{ll}
+z_1 \geq 0\\
+x \geq 0\\
+z_1 + y \geq x\\
+C^1 \max{O_{1}} (z_1 + y) =  C^2 \max{O_{2}} (y) + M_1 \\
+\end{array} \right.
+\end{array} \right.
+\end{displaymath}
+
+\textbf{Funci\'on para optimizar el costo de la empresa 2:}
+
+\begin{displaymath}
+ G_{2} (x, y, z_2) = \left\{ \begin{array}{ll}
+m\'in f(y,x,z_2) \\
+S.A\left\{ \begin{array}{ll}
+z_2 \geq 0\\
+y \geq 0\\
+z_2 + x \geq y\\
+ C\max{O_{2}}* (z_2 + x) =   C\max{O_{1}} * (x) + M_2 \\
+\end{array} \right.
+\end{array} \right.
+\end{displaymath}
+
+\vspace{2cm}
+\newpage
+
+\vspace{1cm}
+\begin{center}
+\Large{ Instrucciones de uso: }
+\end{center}
+Para utilizar ambos algoritmos es necesario suministrar la información mediante un archivo.xlsx en la carpeta  $ Data_Base$,
+el archivo a rellenar con los siguientes parámetros:
+
+\begin{center}
+ 
+      Process  (Nombre del proceso)\\
+      C Max in  C Max out : (Concentración máxima de contaminante
+        aceptado tanto en la entra como la concentración de contaminante 
+        máxima en la salida)\\
+      Process water consumption (Cantidad de agua que consume el proceso)\\
+      States maximum water supply (Cantidad de agua máxima a abastecer para el proceso)\\
+      Sale price of state water (Precio de venta del agua)\\ 
+      Discharge Water Price  (Precio de descargar el agua)
+      Time of the test (Esta es la cantidad ciclos que se quieren medir en esa ejecución
+      ; no es lo mismo que el requisito de cuantas iteraciones 
+      que se pide al ejecutar el código)\\
+      Company To Send Water (Nombre de la compañía al la que se le oferta enviar el agua)\\
+
+      Process to send (Nombre del proceso de la compañía a la que se le oferta el agua)\\
+         Maximum water supply  (Cantidad máxima de agua que se oferta para ese proceso)\\
+
+        Sales Price (Precio de venta del agua a ese proceso)
+
+          Con Contamination 
+  
+\end{center}  
+
+Todas la unidades de medida de tiempo, capacidad o precios deben ser los mismos para todos los datos a rellenar.
+
+
+\begin{center}
+   La salida del algoritmo esta en archivos .xlsx en la carpeta $Output$
+\end{center}
+
+
+\begin{center}
+\vspace{1cm}
+{\Large M\'odelo Computacional:}
+\end{center}
+
+
+\vspace{1.0cm}
+ \begin{center}
+ {\Large Algoritmo de optimización:}
+ \end{center}
+
+
+El algoritmo se centra en dado unos datos iniciales suministrados por un modelo en .xlsx en la carpeta $ Data_Base$,
+ el cual se computa para devolver las respuestas en un nuevo archivo .xlsx, en la carpeta Output donde empieza con
+  la palabra Output y continua con el mismo nombre que ten\'ia el archivo del cual se extrajo la informaci\'on .
+  
+ Se trata de un proceso iterativo, cada iteraci\'on optimiza el costo de  una empresa  y emplea el resultado como par\'ametro para la optimizaci\'on de la siguiente  empresa. Los par\'ametros iniciales son suministrados mediante un documento excel. Para optimizar el costo de la empresa $i$ se toma como par\'ametro $ W_{i}$ ,$ W_{zi}$ ,$ W_{ji}$ ,$ \alpha $ ,$ \beta $, $ \delta $, $h$, $ C\max{I_{i}}$, $ C\max{O_{i }} $ y $ M_i $ . Primeramente se analiza que se cumplen las condiciones de factibilidad, de cumplir los par\'ametros con las restricciones $z_1 \geq 0$, $x\geq 0$,
+$z_1 + y \geq x$, $C^1 \max{O_{1}} (z_1 + y) =  C^2 \max{O_{2}} (y) + M_1 $ se suministrado al solver PulP. El cual devuelve un vector soluci\'on de cuatro componentes, el costo, $z_i$, el agua comprada a la empresa j y la oferta de venta de la empresa i a la empresa j. Este \'ultimo componente se utiliza como par\'ametro para optimizar el costo de la empresa j. El ciclo de optimizaci\'on se ejecutara la cantidad de veces indicada por el usuario siempre que los par\'ametros del problema cumplan las resticciones de sus respectivas funciones.
+  \begin{center}
+    \vspace{1cm}
+    \Large{Nota:}
+  \end{center}
+
+  La informaci\'on antes obtenida se analiza por medio de algoritmos de programaci\'on lineal: PulP, antes de 
+  realizar dicha optimizaci\'on se lleva a cabo la comprobaci\'on de las condiciones necesarias y suficientes como
+   son:  $ C\max{O_{i }} $ $<=$  $ C\max{I_{i}}$ ${i \neq j}$; 
+ en caso de no cumplirse se toma la decisi\'on de hacer dicha oferta como nula, an\'alogamente se procede
+  con despu\'es de
+analizado las condiciones anteriores a comprobar que:  $z_i \geq 0$, $x\geq 0$,
+$z_j + y \geq W{i}$ donde la empresa $ i$ ser\'ai la que se comenz\'a a analizar. El algoritmo analiza un
+ proceso a la vez tomando como la oferta realizada al contrario será aceptada inicialmente, mientras que al final de 
+ cada ejecución este se re-calcula.\\
+  Como en este análisis solo utilizamos el caso de dos empresas
+ con un solo proceso cada una cada vez que se quiere ejecutar un ciclo del anterior algoritmo el resultado por cada ciclo será el mismo, dado 
+ que cada iteración los valores de contaminación son los mismos.
+ 
+ \vspace{1.0cm}
+ \begin{center}
+ {\Large Algoritmo numérico:}
+ \end{center}
+ El método de optimización con Newton Raphson compara los datos de entradas y busca que tan cerca está dicha solución del valor 
+ óptimo, dado que dicho algoritmo siempre y cuando cumpla con las condiciones necesarias de convergencia de este.\\
+
+ Nota : El caso de parada es cuando la norma del vector del caso k y k-1 es menor que un epsilon (en este caso epsilon es igual 0.01).\\
+ 
+ Para la realización de este algoritmo se utilizaron las bibliotecas de numpy y sympy. 
+ El modelo matemático en el cuál se basa es en el de dado el sistema de ecuaciones que en este caso serían las derivadas de primer orden (M) del sistema que se muestra como modelo matemático
+ conformándose un sistema de 12 ecuaciones igualadas todas a la solución homogénea. Dado que todavía no se tiene un sistema lineal de ecuaciones 
+ se procede a hallar la matriz jacobina del sistema anterior (Df). después para hallar el paso se procede a realizar 
+ por factorización PLU la resolución del sistema de ecuaciones del h=  Df M(evaluada en el paso k)
+ después al paso $k+1$$=$$k+h$ siendo un bucle este hasta que se cumpla la condición de parada o 
+ se realizan más de 50 iteraciones
+ .
+
+
+ \vspace{1.0cm}
+\begin{center}
+{\Large Ejemplos N\'umericos:}
+\end{center}
+
+
+
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|c|}{Par\'ametro}& \multicolumn{6}{|c|}{Caso} \\
+\hline
+ & \multicolumn{2}{|c|}{1} & \multicolumn{2}{|c|}{2} & \multicolumn{2}{|c|}{3} \\ 
+\hline
+ & empresa 1 & empresa 2 & empresa 1 & empresa 2  & empresa 1 & empresa 2   \\  
+
+
+\hline
+$ W_{i}$ & 10000&  10000& 10000 &  10000&  10000 & 10000 \\
+$ W_{zi}$  & 10000&  10000& 10000 &  10000&  10000 & 10000  \\
+ $ W_{ji}$  & 10000 &10000 & 50000 & 50000& 10000 &10000 \\
+ $ \alpha $   & 1& 1& 10 & 7.5 & 1  &  1 \\
+$ \beta $  & 0.35 & 0.25& 0.25 & 0.35 & 0.25 & 0.35 \\
+$ \delta $  & 1 & 4.5 & 1 &1 & 1 & 1 \\
+$h$   & 10 & 10  &10 & 10  &10  & 10 \\
+$ C\max{I_{i}} $  &100 & 70 &100 & 70 &100 & 70 \\
+$ C\max{O_{i }}$  &200 & 90 &200 & 90&200 & 90\\
+$ M_i $  & 75& 50 & 75  & 50 & 20  &  25\\
+
+\hline
+\end{tabular} \\ \\ \\
+
+
+\begin{center}
+{\Large Resultados:}
+\end{center}
+
+
+
+
+
+
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+
+\multicolumn{1}{|c|}{Resultados} & \multicolumn{3}{|c|}{Caso}\\
+
+ & 1 & 2 & 3\\
+\hline
+  x & 0&  0 & 0 \\ 
+\hline
+  y &10000 & 10000 & 10000 \\
+\hline
+  $z_{1}$ & 0 & 0 & 0 \\
+\hline
+  $z_{2}$  &10000 & 10000 & 100001  \\
+\hline
+  $Costo~para~ la~ empresa~1$ & 200000 & 7500 & 75000\\
+\hline
+  $Costo~para~la~empresa~2$ & 75000 & 975000 & 500000\\
+\hline
+\end{tabular}
+
+\end{center}
+
+
+   Debido a la dimensi\'on del problema solo tomamos los resultados de la primera iteraci\'on del ciclo. El c\'odigo se ejecuto en un PC HP Pavilion 15 con procesador AMD Ryzen 3 2300U 2.00 GHz, 12.0 GB de memoria RAM  en el sistema operativo Windows 10 con configuraci\'on de 64 bits.
+\newpage
+
+
+\vspace{1.0cm}
+\begin{center}
+{\Large Método Numérico:}
+\end{center}
+
+\vspace{0.5 cm}
+A continuaci\'on se expone la soluci\'on del problema de optimizaci\'on  usando el m\'etodo de Newton. Este se encuentra implementado en la funci\'on Newton Raphson, la cual recibe como par\'ametros un vector de 12 componentes $f(x)$, halla la matriz jacobiana del sistema de ecucaciones y su descomposi\'on LU usando los m\'etodos jacobian y LUsolve respectivamente. Esta \'ultima se representar\'a por $A$.  El m\'etodo tomara una aproximaci\'on de la soluci\'on $x^{(k)}$ para encontrar una aproximaci\'on $x^{(k+1)}$  usando la ecuaci\'on :  
+\begin{center}
+
+A * ($x^{(k+1)}$ -$x^{(k)}$) = -$f(x^{(k)})$ \ k = 0,1,2...
+\end{center}
+
+donde $x^{(0)}$ es el vector $0_{12}$. El m\'etodo tendr\'a como condici\'on de parada ||$x^{(k+1)}$ -$x^{(k)}$|| $<$ $e_{1}$ \\ y || $\frac{\  x^{(k+1)} - x^{(k)}}{\ x^{(k+1)}}$|| $<$ $e_{2}$.
+
+
+\begin{center}
+{\Large Ejemplos N\'umericos :}
+\end{center}
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+
+\multicolumn{1}{|c|}{Resultados} & \multicolumn{3}{|c|}{Casos}\\
+\hline
+ & 1 & 2 & 3\\
+\hline
+  x & 0&  0 & 0 \\ 
+\hline
+  y & 0.000021 & 0.000021 & 0.000021  \\
+\hline
+  $z_{1}$ & 0 & 0 & 0 \\
+\hline
+  $z_{2}$  & 0.000021 &  0.000021& 0.000021  \\
+\hline
+
+
+\end{tabular}
+
+\end{center}
+
+
+\begin{center}
+\vspace{1cm}
+{\Large Bibliograf\'ia:}
+\end{center}
+
+
+(1) Ramos, Manuel(2016): Water integration in eco-industrial parks using a multi-leader-follower approach.
+
+
+\end{document}
